@@ -1,0 +1,42 @@
+{
+  "general": {
+    "description": "Framework for Cardio Events VGG16 from Retinal Images",
+    "exp_name": "cardio_events_exp",
+    "agent": "CardioEventsAgent",
+    "architecture": "CACRetinalModel",
+    "classes": {"NO": 0, "YES": 1},
+    "optimizer": "SDG"
+  },
+  "paths": {
+    "clinical_dataset": "input/image/cardio_events/original",
+    "fold_configuration": "input/cardio_all_images_fold_distribution.json"
+  },
+  "transformations": {
+    "image_normalization": [[0.47844156445765096, 0.24181975400272823, 0.12534130193588575], [0.2707283371500368, 0.14377206243984877, 0.07814881338405352]]
+
+  },
+  "execution": {
+    "folds": [[1,1], [1,5]],
+    "cuda": true,
+    "seed": 3
+  },
+  "dataset": {
+    "data_loader": "CardioRetinalImageDataset",
+    "data_loader_workers": 4
+  },
+  "hyperparams": {
+    "epochs": 200,
+    "batch_size": 8,
+    "learning_rate": 0.0001,
+    "momentum": 0.5,
+    "gamma": 0.1,
+    "weight_decay": 0,
+    "log_interval": 100,
+    "validate_every": 10
+  },
+  "output": {
+    "checkpoint_file": "checkpoint.pth.tar",
+    "data_mode": "download",
+    "data_folder": ""
+  }
+}
