@@ -61,7 +61,7 @@ def get_config_from_json(json_file: str) -> tuple:
             exit(-1)
 
 
-def process_config(json_file: str) -> dict:
+def process_config(json_file: str) -> EasyDict:
     """ Initializes experiment"""
     # Loads experiment configuration
     config, _ = get_config_from_json(json_file)
