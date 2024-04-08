@@ -5,6 +5,11 @@
 # File: retinal_main.py
 
 Description: Main entry script point
+    - Capture the config file
+    - Process the json config passed
+    - Create an agent instance
+    - Run the agent
+    - Finalize the agent
 """
 
 import argparse
@@ -26,7 +31,6 @@ def main():
     # parse the config json file
     config = process_config(args.config)
 
-    mydict = config.general.agent
     # Create the Agent and pass all the configuration to it then run it..
     agent_class = globals()[config.general.agent]
     agent = agent_class(config)
