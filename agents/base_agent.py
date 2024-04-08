@@ -19,7 +19,7 @@ class BaseAgent:
     def __init__(self, config: dict):
         self._config = config
         self._logger = logging.getLogger("Agent")
-        self._logger.info(" THE Configuration of your experiment ..")
+        self._logger.info("the Configuration of your experiment:")
         self._logger.info(self._config)
 
     def load_checkpoint(self, file_name: str):
