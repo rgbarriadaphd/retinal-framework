@@ -16,9 +16,8 @@ class RetinalModel(nn.Module):
         """
         Implements VGG16 for classification with retinal images
 
-        Args:
-        num_classe: Number of classification categories
-        mode: Defines the parts of the architecture that will be trained:
+        :param: num_classes: Number of classification categories
+        :param mode: Defines the parts of the architecture that will be trained:
             ``'basic_a'`` (default): Pretrained with IMAGENET1K_V1: nothing freeze
             ``'basic_b'``: Pretrained with IMAGENET1K_V1: freeze features
             ``'features_a'``: Pretrained with IMAGENET1K_FEATURES: nothing freeze, classifier init with Xavier.
@@ -31,11 +30,14 @@ class RetinalModel(nn.Module):
         self._last_fc_index = 6
 
     def _init_model(self):
+        """Initialize model based on weights mode"""
         if self._mode == 'basic_a' or self._mode == 'basic_b':
             self._model = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
         else:
             self._model = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_FEATURES)
 
+        # VGG16 is trained on ImageNet for 1000 classes. Here, we adapt last layer to the specific problem
+        # with corresponding number of layers
         num_features = self._model.classifier[self._last_fc_index].in_features
         features = list(self._model.classifier.children())[:-1]  # Remove last layer
         linear = nn.Linear(num_features, self._num_classes)
@@ -43,6 +45,7 @@ class RetinalModel(nn.Module):
         self._model.classifier = nn.Sequential(*features)
 
     def _freeze_sub_architecture(self):
+        """Set gradient modification of parameters based on mode"""
         if self._mode == 'basic_a' or self._mode == 'features_a':
             for param in self._model.parameters():
                 param.requires_grad = True
@@ -53,19 +56,24 @@ class RetinalModel(nn.Module):
                 param.requires_grad = True
 
     def _weight_initialization(self):
+        """Apply weight initialization"""
         if self._mode == 'features_a' or self._mode == 'features_b':
             self.apply(self._init_weights)
 
     @staticmethod
     def _init_weights(module):
+        """Initialize weights using a Xavier uniform distribution.
+        The method is described in:
+            Understanding the difficulty of training deep feedforward neural networks
+            - Glorot, X. & Bengio, Y. (2010).
+        ref: https://pytorch.org/docs/stable/nn.init.html#torch.nn.init.xavier_uniform_
+        """
         if isinstance(module, nn.Linear):
             nn.init.xavier_uniform_(module.weight.data)
             nn.init.constant_(module.bias.data, 0)
 
-    def get(self):
-        """
-        Return model
-        """
+    def get(self) -> models.vgg16:
+        """Return model"""
         self._init_model()
         self._freeze_sub_architecture()
         self._weight_initialization()
