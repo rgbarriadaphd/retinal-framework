@@ -1,4 +1,5 @@
 {
+  "agent": "CardioEventsAgent",
   "general": {
     "description": "Framework for Cardio Events VGG16 from Retinal Images",
     "exp_name": "cardio_events_exp",
